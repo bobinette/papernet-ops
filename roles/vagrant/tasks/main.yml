@@ -8,3 +8,7 @@
     user: vagrant
     state: present
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name:
+  shell: echo "192.168.50.3 local-bobi.space" >> /etc/hosts
+  become: true

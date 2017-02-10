@@ -25,8 +25,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     papernet.vm.provision "ansible" do |ansible|
       ansible.playbook = "vagrant.yml"
-      ansible.verbose = "vvvv"
+      ansible.verbose = "vv"
       ansible.inventory_path = "dev/inventory"
+      ansible.raw_arguments = ["--vault-password-file=vault_pass.txt"]
     end
 
   end

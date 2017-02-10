@@ -6,8 +6,8 @@ server {
     # -----------------------------------------------------
     # SSL config
     listen 443 ssl;
-    ssl_certificate {{ ssl_certificate }}; # /etc/letsencrypt/live/bobi.space/fullchain.pem;
-    ssl_certificate_key {{ ssl_certificate_key }}; # /etc/letsencrypt/live/bobi.space/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/bobi.space/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/bobi.space/privkey.pem;
 
     location ~ /.well-known {
         root /var/www/html;
@@ -50,7 +50,7 @@ server {
 # Redirect non secure calls
 server {
     listen 80;
-    server_name {{ server_name  }};
+    server_name {{ server_name }};
     return 301 https://$host$request_uri;
 }
 {% endif %}

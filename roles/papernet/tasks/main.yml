@@ -1,8 +1,12 @@
-- name: Install nginx
+- name: Install packages
   apt:
-    name: nginx
+    name: "{{ item }}"
     state: present
   become: true
+  with_items:
+    - nginx
+    - jq
+    - unzip
 
 - name: Copy nginx configuration
   template:
@@ -22,14 +26,19 @@
     state: link
   become: true
 
-- name: Create papernet directory
+- name: Create needed directories
   file:
-    path: /var/www/papernet
+    path: "{{ item }}"
     state: directory
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0755
   become: true
+  with_items:
+    - /var/www/papernet
+    - /var/www/papernet/data
+    - /var/www/papernet/app
+    - /var/log/papernet
 
 - name: Push download script
   template:
@@ -38,12 +47,6 @@
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0744
-  become: true
-
-- name: Install jq
-  apt:
-    name: jq
-    state: present
   become: true
 
 - name: Execute download script
@@ -89,6 +92,32 @@
     group: "{{ user }}"
     mode: 644
   become: true
+
+- name: Push download front script
+  template:
+    src: get_front.sh.j2
+    dest: /var/www/papernet/get_front.sh
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0744
+  become: true
+
+- name: Execute download front script
+  shell: /var/www/papernet/get_front.sh
+  args:
+    chdir: /var/www/papernet
+
+- name: Unzip app
+  unarchive:
+    src: /var/www/papernet/papernet-front.zip
+    dest: /var/www/papernet
+    copy: no
+
+# This step needs the web server to be stopped
+# - name: Create mapping
+#   shell: /var/www/papernet/papernet-cli index create --index=data/papernet.index --mapping=mapping.json
+#   args:
+#     chdir: /var/www/papernet
 
 - name: Restart nginx and papernet
   service:

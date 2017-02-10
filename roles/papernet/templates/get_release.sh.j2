@@ -25,7 +25,7 @@ release_content=`curl -s $GITHUB/repos/$REPO/releases/latest`
 release_id=`echo $release_content | jq $id_parser`
 
 if [ -f $RELEASE_FILE ]; then
-    previous_release_id=`cat release_id.txt`
+    previous_release_id=`cat $RELEASE_FILE`
     if [ "$previous_release_id" -eq "$release_id" ]; then
         echo "Same release as last time, not downloading"
         exit 0
@@ -47,4 +47,4 @@ if [ "$asset_id" = "null" ]; then
 fi;
 wget https://api.github.com/repos/$REPO/releases/assets/$asset_id -q --header='Accept:application/octet-stream' -O ./papernet-cli
 
-echo $release_id > release_id.txt
+echo $release_id > $RELEASE_FILE

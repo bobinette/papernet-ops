@@ -1,7 +1,7 @@
-
-user: vagrant
-server_name:  local-bobi.space
-ssl: false
+---
+user: papernet
+server_name:  bobi.space
+ssl: true
 
 github:
   username: bobinette
