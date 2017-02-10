@@ -1,0 +1,15 @@
+
+user: vagrant
+server_name:  local-bobi.space
+ssl: false
+
+github:
+  username: bobinette
+  repository: papernet
+  filename: papernet-linux-amd64
+
+hs256_key: hs256
+google:
+  client_id: pizza
+  client_secret: yolo
+  access_token: token

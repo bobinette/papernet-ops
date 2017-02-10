@@ -1,0 +1,101 @@
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+  become: true
+
+- name: Copy nginx configuration
+  template:
+    src: papernet.conf.j2
+    dest: /etc/nginx/sites-available/papernet.conf
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0644
+  become: true
+
+- name: Symlink the nginx configuration
+  file:
+    src: /etc/nginx/sites-available/papernet.conf
+    dest: /etc/nginx/sites-enabled/papernet.conf
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    state: link
+  become: true
+
+- name: Create papernet directory
+  file:
+    path: /var/www/papernet
+    state: directory
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
+  become: true
+
+- name: Push download script
+  template:
+    src: get_release.sh.j2
+    dest: /var/www/papernet/get_release.sh
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0744
+  become: true
+
+- name: Install jq
+  apt:
+    name: jq
+    state: present
+  become: true
+
+- name: Execute download script
+  shell: /var/www/papernet/get_release.sh
+  args:
+    chdir: /var/www/papernet
+
+- name: Make binary executable
+  file:
+    path: "/var/www/papernet/{{ item }}"
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0744
+  with_items:
+    - papernet-web
+    - papernet-cli
+
+- name: Copy configuration files
+  template:
+    src: "{{ item }}.j2"
+    dest: /var/www/papernet/{{ item }}
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0644
+  with_items:
+    - hs256.json
+    - oauth_google.json
+
+- name: Copy mapping file
+  copy:
+    src: mapping.json
+    dest: /var/www/papernet/mapping.json
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0644
+  become: true
+
+- name: Put papernet in systemd
+  copy:
+    src: papernet.service
+    dest: /lib/systemd/system/papernet.service
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 644
+  become: true
+
+- name: Restart nginx and papernet
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - nginx
+    - papernet
+  become: true
+
