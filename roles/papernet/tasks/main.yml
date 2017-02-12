@@ -38,7 +38,7 @@
     - /var/www/papernet
     - /var/www/papernet/data
     - /var/www/papernet/app
-    - /var/log/papernet
+    - /var/www/papernet/configuration
 
 - name: Push download script
   template:
@@ -64,25 +64,27 @@
     - papernet-web
     - papernet-cli
 
-- name: Copy configuration files
+- name: Copy configuration templates
   template:
-    src: "{{ item }}.j2"
-    dest: /var/www/papernet/{{ item }}
+    src: "{{ item.src }}"
+    dest: "/var/www/papernet/{{ item.dest }}"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0644
   with_items:
-    - hs256.json
-    - oauth_google.json
+    - {src: hs256.json.j2, dest: configuration/hs256.json}
+    - {src: oauth_google.json.j2, dest: configuration/oauth_google.json}
 
-- name: Copy mapping file
+- name: Copy configuration files
   copy:
-    src: mapping.json
-    dest: /var/www/papernet/mapping.json
+    src: "{{ item.src }}"
+    dest: "/var/www/papernet/{{ item.dest }}"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0644
-  become: true
+  with_items:
+    - {src: config.prod.toml, dest: configuration/config.prod.toml}
+    - {src: mapping.json, dest: mapping.json}
 
 - name: Put papernet in systemd
   copy:
