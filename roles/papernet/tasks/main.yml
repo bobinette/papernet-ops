@@ -49,6 +49,12 @@
     mode: 0744
   become: true
 
+- name: Stop papernet
+  service:
+    name: papernet
+    state: stopped
+  become: true
+
 - name: Execute download script
   shell: /var/www/papernet/get_release.sh
   args:
