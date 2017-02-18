@@ -121,12 +121,6 @@
     dest: /var/www/papernet
     copy: no
 
-# This step needs the web server to be stopped
-# - name: Create mapping
-#   shell: /var/www/papernet/papernet-cli index create --index=data/papernet.index --mapping=mapping.json
-#   args:
-#     chdir: /var/www/papernet
-
 - name: Restart nginx and papernet
   service:
     name: "{{ item }}"

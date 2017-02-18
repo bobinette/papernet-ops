@@ -1,6 +1,7 @@
 ---
 user: papernet
 server_name:  bobi.space
+front_server_name:  papernet.bobi.space
 ssl: true
 
 github:

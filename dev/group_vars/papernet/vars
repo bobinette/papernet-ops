@@ -1,6 +1,7 @@
 
 user: vagrant
 server_name:  local-bobi.space
+front_server_name:  papernet.local-bobi.space
 ssl: false
 
 github:
