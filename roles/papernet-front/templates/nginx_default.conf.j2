@@ -1,6 +1,6 @@
-# Frontend configuration
+# Main configuration
 server {
-    server_name {{ front_server_name }};
+    server_name {{ server_name }};
 
     # Useful logs for debug.
     access_log      /var/log/nginx/access.log;
@@ -28,18 +28,15 @@ server {
     ssl_stapling_verify on;
     add_header Strict-Transport-Security max-age=15768000;
     # -----------------------------------------------------
+
+    # Redirect to the papernet sub domain
+    return 301 https://papernet.$host$request_uri;
     {% else -%}
     listen 80;
+
+    # Redirect to the papernet sub domain
+    return 301 http://papernet.$host$request_uri;
     {% endif %}
-
-    # Papernet front
-    location / {
-        root /var/www/papernet;
-        index /var/www/papernet/app/index.html;
-
-        try_files $uri $uri/ /app/index.html;
-    }
-
 }
 
 {% if ssl %}

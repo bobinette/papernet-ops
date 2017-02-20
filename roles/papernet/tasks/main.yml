@@ -10,7 +10,7 @@
 
 - name: Copy nginx configuration
   template:
-    src: papernet.conf.j2
+    src: nginx.conf.j2
     dest: /etc/nginx/sites-available/papernet.conf
     owner: "{{ user }}"
     group: "{{ user }}"
@@ -37,8 +37,22 @@
   with_items:
     - /var/www/papernet
     - /var/www/papernet/data
-    - /var/www/papernet/app
     - /var/www/papernet/configuration
+
+- name: Put papernet in systemd
+  copy:
+    src: papernet.service
+    dest: /lib/systemd/system/papernet.service
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 644
+  become: true
+
+- name: Stop papernet
+  service:
+    name: papernet
+    state: stopped
+  become: true
 
 - name: Push download script
   template:
@@ -47,12 +61,6 @@
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0744
-  become: true
-
-- name: Stop papernet
-  service:
-    name: papernet
-    state: stopped
   become: true
 
 - name: Execute download script
@@ -78,8 +86,8 @@
     group: "{{ user }}"
     mode: 0644
   with_items:
-    - {src: hs256.json.j2, dest: configuration/hs256.json}
-    - {src: oauth_google.json.j2, dest: configuration/oauth_google.json}
+    - { src: hs256.json.j2, dest: configuration/hs256.json }
+    - { src: oauth_google.json.j2, dest: configuration/oauth_google.json }
 
 - name: Copy configuration files
   copy:
@@ -89,37 +97,8 @@
     group: "{{ user }}"
     mode: 0644
   with_items:
-    - {src: config.prod.toml, dest: configuration/config.prod.toml}
-    - {src: mapping.json, dest: mapping.json}
-
-- name: Put papernet in systemd
-  copy:
-    src: papernet.service
-    dest: /lib/systemd/system/papernet.service
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 644
-  become: true
-
-- name: Push download front script
-  template:
-    src: get_front.sh.j2
-    dest: /var/www/papernet/get_front.sh
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 0744
-  become: true
-
-- name: Execute download front script
-  shell: /var/www/papernet/get_front.sh
-  args:
-    chdir: /var/www/papernet
-
-- name: Unzip app
-  unarchive:
-    src: /var/www/papernet/papernet-front.zip
-    dest: /var/www/papernet
-    copy: no
+    - { src: config.prod.toml, dest: configuration/config.prod.toml }
+    - { src: mapping.json, dest: mapping.json }
 
 - name: Restart nginx and papernet
   service:

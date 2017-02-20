@@ -10,5 +10,12 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 
 - name:
-  shell: echo "192.168.50.3 local-bobi.space" >> /etc/hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
   become: true
+  with_items:
+    - { regexp: '^192.168.50.3 local-bobi.space$', line: "192.168.50.3 local-bobi.space" }
+    - { regexp: '^192.168.50.3 api.local-bobi.space$', line: "192.168.50.3 api.local-bobi.space" }
+    - { regexp: '^192.168.50.3 papernet.local-bobi.space$', line: "192.168.50.3 papernet.local-bobi.space" }

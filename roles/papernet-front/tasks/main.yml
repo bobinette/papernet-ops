@@ -10,21 +10,27 @@
 
 - name: Copy nginx configuration
   template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/sites-available/papernet-front.conf
+    src: "{{ item.src }}"
+    dest: "/etc/nginx/sites-available/{{ item.dest }}"
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0644
   become: true
+  with_items:
+    - { src: nginx.conf.j2, dest: papernet-front.conf }
+    - { src: nginx_default.conf.j2, dest: default.conf }
 
 - name: Symlink the nginx configuration
   file:
-    src: /etc/nginx/sites-available/papernet-front.conf
-    dest: /etc/nginx/sites-enabled/papernet-front.conf
+    src: "/etc/nginx/sites-available/{{ item }}"
+    dest: "/etc/nginx/sites-enabled/{{ item }}"
     owner: "{{ user }}"
     group: "{{ user }}"
     state: link
   become: true
+  with_items:
+    - papernet-front.conf
+    - default.conf
 
 - name: Create needed directories
   file:
