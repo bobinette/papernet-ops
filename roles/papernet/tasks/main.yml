@@ -98,7 +98,6 @@
     mode: 0644
   with_items:
     - { src: config.prod.toml, dest: configuration/config.prod.toml }
-    - { src: mapping.json, dest: mapping.json }
 
 - name: Restart nginx and papernet
   service:
