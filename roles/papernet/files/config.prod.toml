@@ -3,6 +3,11 @@
 # Auth files
 [auth]
 key = "configuration/hs256.json"
+
+  [auth.cayley]
+  store = "data/auth.graph"
+
+[oauth]
 google = "configuration/oauth_google.json"
 
 [bolt]
