@@ -30,12 +30,12 @@ server {
     # -----------------------------------------------------
 
     # Redirect to the papernet sub domain
-    return 301 https://papernet.$host$request_uri;
+    return 301 https://papernet.{{ server_name }}$request_uri;
     {% else -%}
     listen 80;
 
     # Redirect to the papernet sub domain
-    return 301 http://papernet.$host$request_uri;
+    return 301 http://papernet.{{ server_name }}$request_uri;
     {% endif %}
 }
 
