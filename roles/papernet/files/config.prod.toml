@@ -27,12 +27,25 @@ file="configuration/oauth_google.json"
 # ----------------------------------------
 # Imports service
 [imports]
-paperURL="http://127.0.0.1:1705/papers" # Mono server => it works
+paperURL="http://127.0.0.1:1705/paper/v2/papers" # Mono server => it works
 key = "configuration/hs256.json"
 
 [imports.bolt]
 store="data/imports.db"
 # Imports service
+# ----------------------------------------
+
+# ----------------------------------------
+# Paper server
+[paper]
+key = "configuration/hs256.json"
+
+[paper.bolt]
+store = "data/paper.db"
+
+[paper.bleve]
+store = "data/paper.index"
+# Paper server
 # ----------------------------------------
 
 # ----------------------------------------
