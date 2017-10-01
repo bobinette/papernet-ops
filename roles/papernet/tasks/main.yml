@@ -88,16 +88,7 @@
   with_items:
     - { src: hs256.json.j2, dest: configuration/hs256.json }
     - { src: oauth_google.json.j2, dest: configuration/oauth_google.json }
-
-- name: Copy configuration files
-  copy:
-    src: "{{ item.src }}"
-    dest: "/var/www/papernet/{{ item.dest }}"
-    owner: "{{ user }}"
-    group: "{{ user }}"
-    mode: 0644
-  with_items:
-    - { src: config.prod.toml, dest: configuration/config.prod.toml }
+    - { src: config.prod.toml.j2, dest: configuration/config.prod.toml }
 
 - name: Restart nginx and papernet
   service:
